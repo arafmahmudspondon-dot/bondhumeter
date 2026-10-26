@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  password    String? // scrypt hash — null only for Google-only accounts
+  name        String?
+  image       String?
+  provider    String    @default("email") // "email" | "google"
+  phone       String?
+  fbLink      String?
+  instaLink   String?
+  bio         String?
+  role        String    @default("USER") // "USER" | "ADMIN"
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  quizzes     Quiz[]
+  visits      Visitor[]
+}
+
+model Quiz {
+  id          String     @id @default(cuid())
+  code        String     @unique
+  title       String
+  creatorName String
+  userId      String?
+  user        User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  questions   Question[]
+  attempts    Attempt[]
+  createdAt   DateTime   @default(now())
+}
+
+model Question {
+  id           String @id @default(cuid())
+  quizId       String
+  quiz         Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  order        Int    @default(0)
+  text         String
+  options      String // JSON array of option strings
+  correctIndex Int
+}
+
+model Attempt {
+  id         String   @id @default(cuid())
+  quizId     String
+  quiz       Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  playerName String
+  answers    String // JSON array of chosen indexes (-1 = skipped)
+  score      Int
+  total      Int
+  feedback   String? // short note the player leaves for the quiz creator
+  createdAt  DateTime @default(now())
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model Visitor {
+  id        String   @id @default(cuid())
+  sessionId String // anonymous cookie id
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  ip        String?
+  city      String?
+  region    String?
+  country   String?
+  latitude  Float?
+  longitude Float?
+  isp       String?
+  browser   String?
+  os        String?
+  device    String?
+  screen    String?
+  language  String?
+  timezone  String?
+  referer   String?
+  path      String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
