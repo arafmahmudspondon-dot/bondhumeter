@@ -1,5 +1,5 @@
 /**
- * seed-prod.mjs — runs after `prisma db push` inside the build.
+ * seed-prod.mjs (v2) — runs after `prisma db push` inside the build.
  * On a FRESH database (Neon production OR a new local SQLite) it creates
  * the public demo quiz DEMO001 so the home page "Try the demo" pill works.
  * Already-seeded databases are skipped automatically.

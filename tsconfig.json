@@ -25,7 +25,13 @@
     ],
     "paths": {
       "@/*": [
-        "./src/*"
+        "./*"
+      ],
+      "@/components/bondhu/*": [
+        "./bondhu/*"
+      ],
+      "@/components/ui/*": [
+        "./ui/*"
       ]
     }
   },
